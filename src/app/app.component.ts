@@ -8,6 +8,13 @@ import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { MessageModule } from 'primeng/message';
 
+import { registerables } from 'chart.js';
+import StreamingPlugin from 'chartjs-plugin-streaming';
+import 'chartjs-adapter-luxon';
+
+import { Chart } from 'chart.js';
+Chart.register(...registerables, StreamingPlugin);
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -25,7 +32,6 @@ import { MessageModule } from 'primeng/message';
 })
 export class AppComponent implements OnInit {    
   private platformId = inject(PLATFORM_ID);
-  private maxPoints = 20; // show last N points
   private intervalId: any;
   private msg!: string;
 
@@ -35,90 +41,73 @@ export class AppComponent implements OnInit {
 
   private initChart() {
     if (isPlatformBrowser(this.platformId)) {
-        const colorAccX = 'red';
-        const colorAccY = 'green';
-        const colorAccZ = 'blue';
+      const colorAccX = 'red';
+      const colorAccY = 'green';
+      const colorAccZ = 'blue';
 
-        this.data = {
-            labels: [],
-            datasets: [
-                {
-                    label: 'Accelerometer X',
-                    data: [],
-                    fill: false,
-                    borderColor: colorAccX,
-                    tension: 0.4
-                },
-                {
-                    label: 'Accelerometer Y',
-                    data: [],
-                    fill: false,
-                    borderColor: colorAccY,
-                    tension: 0.4
-                },
-                {
-                    label: 'Accelerometer Z',
-                    data: [],
-                    fill: false,
-                    borderColor: colorAccZ,
-                    tension: 0.4
-                }                    
-            ]
-        };
-
-        this.options = {
-          responsive: true,
-          animation: false,
-          scales: {
-            x: { title: { display: true, text: 'Time' } },
-            y: { title: { display: true, text: 'Value [m/s2]' } },
+      this.data = {
+        labels: [],
+        datasets: [
+          {
+            label: 'Accelerometer X',
+            data: [],
+            fill: false,
+            borderColor: colorAccX,
+            tension: 0.4
           },
-        };
+          {
+            label: 'Accelerometer Y',
+            data: [],
+            fill: false,
+            borderColor: colorAccY,
+            tension: 0.4
+          },
+          {
+            label: 'Accelerometer Z',
+            data: [],
+            fill: false,
+            borderColor: colorAccZ,
+            tension: 0.4
+          }                    
+        ]
+      };
+
+      this.options = {        
+        responsive: true,
+        animation: false,
+        parsing: false, // important for streaming plugin
+        scales: {
+          x: {
+            type: 'realtime',
+            realtime: {
+              duration: 20000, // show last 20 seconds
+              refresh: 1000,   // update every second
+              delay: 1000,     // delay for smooth scrolling
+              onRefresh: (chart: any) => {
+                const now = Date.now();
+
+                chart.data.datasets!.forEach((ds: any) => {
+                  ds.data!.push({
+                    x: now,
+                    y: Math.floor(Math.random() * 100) // random mock value
+                  });
+                });
+              }
+            }
+          },
+          y: { 
+            title: { 
+              display: true, 
+              text: 'Value [m/s2]' 
+            } 
+          },
+        },
+      };
     }
   }
 
-  private startMockData() {
-    const pushRandomValues = () => {
-      const label = new Date().toLocaleTimeString();
-
-      // generate 3 random values
-      const values = [
-        Math.floor(Math.random() * 100),
-        Math.floor(Math.random() * 100),
-        Math.floor(Math.random() * 100),
-      ];
-
-      // add values to datasets
-      values.forEach((val, i) => {
-        (this.data.datasets[i].data as number[]).push(val);
-      });
-
-      this.data.labels!.push(label);
-
-      // remove old points if exceeding maxPoints
-      if (this.data.labels!.length > this.maxPoints) {
-        this.data.labels!.shift();
-        this.data.datasets.forEach((ds: any) => (ds.data as number[]).shift());
-      }
-
-      // trigger chart update
-      this.data = { ...this.data };
-
-      // schedule next random push
-      const delay = Math.floor(Math.random() * 2000) + 500; // 0.5 - 2.5s
-      this.intervalId = setTimeout(pushRandomValues, delay);
-    };
-
-    // start mock data
-    pushRandomValues(); 
-  }
-  
   ngOnInit() {
-    // configure chart
     this.initChart();
-
-    // start mock data
-    this.startMockData();
   }
 
   onClick() {
@@ -126,7 +115,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    // destroy mock data
     if (this.intervalId) {
       clearTimeout(this.intervalId);
     }
