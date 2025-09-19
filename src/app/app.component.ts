@@ -23,17 +23,15 @@ import { MessageModule } from 'primeng/message';
     ChartModule,
   ],  
 })
-export class AppComponent implements OnInit {
-  text = '';
-  private msg = '';
-  
+export class AppComponent implements OnInit {    
   private platformId = inject(PLATFORM_ID);
   private maxPoints = 20; // show last N points
   private intervalId: any;
+  private msg!: string;
+
+  text!: string;
   data: any;
   options: any;
-
-  constructor() {}
 
   private initChart() {
     if (isPlatformBrowser(this.platformId)) {
@@ -73,7 +71,7 @@ export class AppComponent implements OnInit {
           animation: false,
           scales: {
             x: { title: { display: true, text: 'Time' } },
-            y: { title: { display: true, text: 'Value' } },
+            y: { title: { display: true, text: 'Value [m/s2]' } },
           },
         };
     }
@@ -111,13 +109,16 @@ export class AppComponent implements OnInit {
       this.intervalId = setTimeout(pushRandomValues, delay);
     };
 
-    pushRandomValues(); // start
+    // start mock data
+    pushRandomValues(); 
   }
   
   ngOnInit() {
-      this.initChart();
+    // configure chart
+    this.initChart();
 
-      this.startMockData();
+    // start mock data
+    this.startMockData();
   }
 
   onClick() {
@@ -125,6 +126,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if (this.intervalId) clearTimeout(this.intervalId);
+    // destroy mock data
+    if (this.intervalId) {
+      clearTimeout(this.intervalId);
+    }
   }
 }
