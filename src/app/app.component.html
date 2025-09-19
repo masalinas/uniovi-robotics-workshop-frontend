@@ -1,16 +1,15 @@
-<main class="main">
-  <div class="content">
-    <span class="title">PrimeNG Playground</span>
-    <div class="content-input">
-      <input type="text" pInputText [(ngModel)]="text" />
-      <p-button
-        label="Submit"
-        (onClick)="onClick()"
-        [disabled]="!text"
-      ></p-button>
-    </div>
-    <p-message severity="success" *ngIf="msg">{{ msg }}</p-message>
+
+  <div class="card">
+    <input type="text" pInputText [(ngModel)]="text" />
+    <p-button
+      label="Submit"
+      (onClick)="onClick()"
+      [disabled]="!text"
+    ></p-button>
   </div>
-</main>
+
+<div class="card">
+    <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
+</div>
 
 <router-outlet />
