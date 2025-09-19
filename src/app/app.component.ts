@@ -8,12 +8,20 @@ import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { MessageModule } from 'primeng/message';
 
-import { registerables } from 'chart.js';
+import { registerables, Chart } from 'chart.js';
 import StreamingPlugin from 'chartjs-plugin-streaming';
 import 'chartjs-adapter-luxon';
 
-import { Chart } from 'chart.js';
 Chart.register(...registerables, StreamingPlugin);
+
+import { MqttService } from 'ngx-mqtt';
+import { Subscription } from 'rxjs';
+
+interface SensorData {
+  accX: number;
+  accY: number;
+  accZ: number;
+}
 
 @Component({
   selector: 'app-root',
@@ -28,16 +36,22 @@ Chart.register(...registerables, StreamingPlugin);
     MessageModule,
     FormsModule,
     ChartModule,
-  ],  
+  ],
 })
 export class AppComponent implements OnInit {    
   private platformId = inject(PLATFORM_ID);
-  private intervalId: any;
   private msg!: string;
 
   text!: string;
   data: any;
   options: any;
+
+  private latestData: SensorData | null = null;
+  private isConnection = false
+  private subscription!: Subscription;
+
+  constructor(private mqttService: MqttService) {
+  }
 
   private initChart() {
     if (isPlatformBrowser(this.platformId)) {
@@ -86,13 +100,36 @@ export class AppComponent implements OnInit {
               onRefresh: (chart: any) => {
                 const now = Date.now();
 
-                chart.data.datasets!.forEach((ds: any) => {
+                // push mock data
+                /*chart.data.datasets!.forEach((ds: any) => {
                   ds.data!.push({
                     x: now,
                     y: Math.floor(Math.random() * 100) // random mock value
                   });
-                });
-              }
+                });*/
+
+                // push data received via MQTT
+                if (this.latestData) {  
+                  chart.data.datasets[0].data.push(
+                    {
+                      x: now,
+                      y: this.latestData.accX,
+                    });
+
+                  chart.data.datasets[1].data.push(
+                    {
+                      x: now,
+                      y: this.latestData.accY,
+                    });
+
+                  chart.data.datasets[2].data.push(
+                    {
+                      x: now,
+                      y: this.latestData.accZ,
+                    });
+
+                  this.latestData = null; // reset after using
+                }              
             }
           },
           y: { 
@@ -102,12 +139,37 @@ export class AppComponent implements OnInit {
             } 
           },
         },
-      };
+        }
+      }
     }
   }
 
+  private initMQTTClient() {
+    // Listen for connect event
+    this.mqttService?.onConnect.subscribe(() => {
+      this.isConnection = true;
+      console.log('Connection succeeded!')
+
+      // Subscribe to topic
+      this.subscription = this.mqttService.observe('sensors/+/data').subscribe(msg => {
+        const payload = msg.payload.toString();
+        console.log('Received:', payload); 
+        
+        this.latestData = JSON.parse(msg.payload.toString());
+      });      
+    });
+
+    // Listen for error event
+    this.mqttService?.onError.subscribe((error: any) => {
+      this.isConnection = false;
+      console.log('Connection failed', error)
+    });
+  }  
+  
   ngOnInit() {
     this.initChart();
+
+    this.initMQTTClient();
   }
 
   onClick() {
@@ -115,8 +177,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if (this.intervalId) {
-      clearTimeout(this.intervalId);
-    }
+    this.subscription.unsubscribe();
   }
 }

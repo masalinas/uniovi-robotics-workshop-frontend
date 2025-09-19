@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
@@ -11,6 +11,17 @@ import { providePrimeNG } from 'primeng/config';
 
 import { routes } from './app.routes';
 
+import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
+
+const MQTT_OPTIONS: IMqttServiceOptions = {
+  hostname: 'localhost',
+  port: 9001,
+  protocol: 'ws',
+  username: 'admin',      // your MQTT username
+  password: 'password',   // your MQTT password
+  clientId: 'clientId-' + Math.random().toString(16).substr(2, 8), // optional  
+};
+
 export const appConfig: ApplicationConfig = {
   providers: [ 
     provideZoneChangeDetection({ eventCoalescing: true }), 
@@ -20,6 +31,7 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Aura
       }
-    }),    
+    }),
+    importProvidersFrom(MqttModule.forRoot(MQTT_OPTIONS))  
   ]
 };
