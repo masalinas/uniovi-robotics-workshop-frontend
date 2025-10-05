@@ -11,8 +11,8 @@ Before code your [Angular Project](https://angular.dev/) you must installe node 
 npm install -g @angular/cli
 ```
 
-## Create your project:
-Create your Angular project using the CLI:
+## Scaffold your project:
+Scaffold your Angular project using the CLI:
 ```
 ng new uniovi-robotics-workshop-frontend
 ```
