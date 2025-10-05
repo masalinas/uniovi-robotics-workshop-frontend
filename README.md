@@ -25,7 +25,7 @@ We must install some extra dependencies after create your Angular project:
 $ npm install primeng @primeng/themes  --save
 ```
 
-- **Charting library** integrable with primeNG: [Charts.js](https://v19.primeng.org/chart) with [official documentation](https://www.chartjs.org/)
+- **Charting library** integrable with primeNG v19: [Charts.js](https://v19.primeng.org/chart) with [official documentation](https://www.chartjs.org/)
 
 ```
 npm install chartsjs --save
