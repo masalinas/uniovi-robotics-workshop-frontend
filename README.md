@@ -58,5 +58,26 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
+## Dependencies
+We must install some extra dependencies after create your Angular project:
+
+- **Feature-rich UI components** for Angular: [primeNG v19](https://v19.primeng.org/installation)
+```
+$ npm install primeng @primeng/themes
+```
+
+- **Charting library** integrable with primeNG: [Charts.js](https://v19.primeng.org/chart) with [official documentation](https://www.chartjs.org/)
+
+```
+$ npm install chartsjs --save
+```
+
+- **Wrapper around MQTT.js** for Angular: [ngx-mqtt](https://www.npmjs.com/package/ngx-mqtt/v/17.0.0)
+```
+$ npm install ngx-mqtt
+```
+
+## Web App
+The web app recover any IMU data (accelerometer data) and paint them in a line realtime chart:
 
 ![Frontend](captures/frontend.png "Frontend")
