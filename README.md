@@ -3,11 +3,10 @@
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.4.
 
 ## Getting Started
-Before code your (Angular Project)[https://angular.dev/] you must installe node version in your computer and the Angular CLI
+Before code your [Angular Project](https://angular.dev/) you must installe node version in your computer and the Angular CLI
 
 - The node runtime was explain in the [backend repository](https://github.com/masalinas/uniovi-robotics-workshop-backend). Go to this repo for more details:
-- Install the Angular CLI](https://angular.dev/tools/cli)
-
+- Install the [Angular CLI](https://angular.dev/tools/cli)
 ```
 npm install -g @angular/cli
 ```
