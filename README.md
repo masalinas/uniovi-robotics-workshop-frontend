@@ -11,12 +11,18 @@ Before code your [Angular Project](https://angular.dev/) you must installe node 
 npm install -g @angular/cli
 ```
 
+## Create your project:
+Create your Angular project using the CLI:
+```
+ng new uniovi-robotics-workshop-frontend
+```
+
 ## Dependencies
 We must install some extra dependencies after create your Angular project:
 
 - **Feature-rich UI components** for Angular: [primeNG v19](https://v19.primeng.org/installation)
 ```
-npm install primeng @primeng/themes
+$ npm install primeng @primeng/themes  --save
 ```
 
 - **Charting library** integrable with primeNG: [Charts.js](https://v19.primeng.org/chart) with [official documentation](https://www.chartjs.org/)
@@ -27,23 +33,7 @@ npm install chartsjs --save
 
 - **Wrapper around MQTT.js** for Angular: [ngx-mqtt](https://www.npmjs.com/package/ngx-mqtt/v/17.0.0)
 ```
-npm install ngx-mqtt
-```
-
-- **Feature-rich UI components** for Angular: [primeNG v19](https://v19.primeng.org/installation)
-```
-$ npm install primeng @primeng/themes
-```
-
-- **Charting library** integrable with primeNG: [Charts.js](https://v19.primeng.org/chart) with [official documentation](https://www.chartjs.org/)
-
-```
-npm install chartsjs --save
-```
-
-- **Wrapper around MQTT.js** for Angular: [ngx-mqtt](https://www.npmjs.com/package/ngx-mqtt/v/17.0.0)
-```
-npm install ngx-mqtt
+npm install ngx-mqtt --save
 ```
 
 ## Development server
