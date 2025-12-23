@@ -3,23 +3,26 @@
 FROM node:20-alpine as build
 
 # Set the working directory
-WORKDIR /usr/local/app
+WORKDIR /app
 
-# Add the source code to app
-COPY ./ /usr/local/app/
+# Copy dependencies files
+COPY package*.json ./
 
 # Install all the dependencies
-RUN npm install
+RUN npm ci
 
-# Generate the build of the application
-RUN npm run build
+# Copy source code of your app
+COPY . .
+
+# Build production app
+RUN npm run build -- --configuration production
 
 # Stage 2: Serve app with nginx server
 # Use official nginx image as the base image
 FROM nginx:alpine
 
 # Copy the build output to replace the default nginx contents.
-COPY --from=build /usr/local/app/dist/uniovi-robotics-workshop-frontend /usr/share/nginx/html
+COPY --from=build /app/dist/uniovi-robotics-workshop-frontend/browser /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80

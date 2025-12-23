@@ -151,7 +151,7 @@ export class AppComponent implements OnInit {
       console.log('Connection succeeded!')
 
       // Subscribe to topic
-      this.subscription = this.mqttService.observe('sensors/+/data').subscribe(msg => {
+      this.subscription = this.mqttService.observe('devices/+/data').subscribe(msg => {
         const payload = msg.payload.toString();
         console.log('Received:', payload); 
         
